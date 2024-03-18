@@ -1,0 +1,408 @@
+﻿Program.Sub.ScreenSU.Start
+Gui.fmQuickEmail..Create(BaseForm)
+Gui.fmQuickEmail..Caption("Quick Email Body Maintenance")
+Gui.fmQuickEmail..Size(713,339)
+Gui.fmQuickEmail..MinX(0)
+Gui.fmQuickEmail..MinY(0)
+Gui.fmQuickEmail..Position(0,0)
+Gui.fmQuickEmail..AlwaysOnTop(False)
+Gui.fmQuickEmail..FontName("Tahoma")
+Gui.fmQuickEmail..FontSize(8.25)
+Gui.fmQuickEmail..ControlBox(True)
+Gui.fmQuickEmail..MaxButton(True)
+Gui.fmQuickEmail..MinButton(True)
+Gui.fmQuickEmail..MousePointer(0)
+Gui.fmQuickEmail..Moveable(True)
+Gui.fmQuickEmail..Sizeable(True)
+Gui.fmQuickEmail..ShowInTaskBar(True)
+Gui.fmQuickEmail..TitleBar(True)
+Gui.fmQuickEmail..Event(UnLoad,fmQuickEmail_UnLoad)
+Gui.fmQuickEmail.lblBodyType.Create(Label,"Please select an email body to edit.",True,169,13,0,10,10,True,0,"Tahoma",8.25,,0,0)
+Gui.fmQuickEmail.lblBodyType.BorderStyle(0)
+Gui.fmQuickEmail.ddlBodyType.Create(DropDownList)
+Gui.fmQuickEmail.ddlBodyType.Enabled(True)
+Gui.fmQuickEmail.ddlBodyType.Visible(True)
+Gui.fmQuickEmail.ddlBodyType.Zorder(0)
+Gui.fmQuickEmail.ddlBodyType.Size(100,20)
+Gui.fmQuickEmail.ddlBodyType.Position(10,28)
+Gui.fmQuickEmail.ddlBodyType.FontName("Tahoma")
+Gui.fmQuickEmail.ddlBodyType.FontSize(8.25)
+Gui.fmQuickEmail.ddlBodyType.Event(Change,ddlBodyType_Change)
+Gui.fmQuickEmail.ddlBodyType.ForeColor(0)
+Gui.fmQuickEmail.ddlBodyType.BackColor(16777215)
+Gui.fmQuickEmail.txtBody.Create(TextboxM)
+Gui.fmQuickEmail.txtBody.Enabled(True)
+Gui.fmQuickEmail.txtBody.Visible(True)
+Gui.fmQuickEmail.txtBody.Zorder(0)
+Gui.fmQuickEmail.txtBody.Size(470,158)
+Gui.fmQuickEmail.txtBody.Position(10,117)
+Gui.fmQuickEmail.txtBody.FontName("Tahoma")
+Gui.fmQuickEmail.txtBody.FontSize(8.25)
+Gui.fmQuickEmail.txtBody.ForeColor(0)
+Gui.fmQuickEmail.txtBody.BackColor(16777215)
+Gui.fmQuickEmail.lblBody.Create(Label,"Email Body",True,51,13,0,10,98,True,0,"Tahoma",8.25,,0,0)
+Gui.fmQuickEmail.lblBody.BorderStyle(0)
+Gui.fmQuickEmail.cmdSave.Create(Button)
+Gui.fmQuickEmail.cmdSave.Enabled(True)
+Gui.fmQuickEmail.cmdSave.Visible(True)
+Gui.fmQuickEmail.cmdSave.Zorder(0)
+Gui.fmQuickEmail.cmdSave.Size(75,23)
+Gui.fmQuickEmail.cmdSave.Position(405,280)
+Gui.fmQuickEmail.cmdSave.Caption("Save")
+Gui.fmQuickEmail.cmdSave.FontName("Tahoma")
+Gui.fmQuickEmail.cmdSave.FontSize(8.25)
+Gui.fmQuickEmail.cmdSave.Event(Click,cmdSave_Click)
+Gui.fmQuickEmail.lblVar.Create(Label,"Available Variables",True,89,13,0,488,10,True,0,"Tahoma",8.25,,0,0)
+Gui.fmQuickEmail.lblVar.BorderStyle(0)
+Gui.fmQuickEmail.lstVar.Create(ListBox)
+Gui.fmQuickEmail.lstVar.Enabled(True)
+Gui.fmQuickEmail.lstVar.Visible(True)
+Gui.fmQuickEmail.lstVar.Zorder(0)
+Gui.fmQuickEmail.lstVar.Size(216,273)
+Gui.fmQuickEmail.lstVar.Position(488,30)
+Gui.fmQuickEmail.lstVar.FontName("Tahoma")
+Gui.fmQuickEmail.lstVar.FontSize(8.25)
+Gui.fmQuickEmail.lstVar.BackColor(16777215)
+Gui.fmQuickEmail.lstVar.ForeColor(0)
+Gui.fmQuickEmail.lblSubject.Create(Label,"Email Subject",True,63,13,0,10,54,True,0,"Tahoma",8.25,,0,0)
+Gui.fmQuickEmail.lblSubject.BorderStyle(0)
+Gui.fmQuickEmail.txtSubject.Create(TextBox,"",True,470,20,0,10,72,True,0,"Tahoma",8.25,16777215,1)
+Gui.fmQuickEmail.txtSubject.ForeColor(0)
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+V.Global.sQteBody.Declare
+V.Global.sSOBody.Declare
+V.Global.sSOPath.Declare
+V.Global.sQtePath.Declare
+V.Global.sSOSubPath.Declare
+V.Global.sQteSubPath.Declare
+V.Global.sSOSub.Declare
+V.Global.sQteSub.Declare
+V.Global.sDir.Declare
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.Try
+Function.Intrinsic.UI.UsePixels ' Allows you to use Pixels instead of Twips throughout
+'TJS, Feb 2021
+'For Aerospace Welding Minneapolis
+'BUSINESS CASE: The customer is wanting a simple email acknowledgement for quotes and sales orders that they can send before the quote or order is actually entered.
+'SOLUTION: From the script 1 button of both quote and order entry screens, once the customer is selected, they would be able to send just a quick acknowledgement without the PDF attached. The email would use the CRM contacts, or the contact populated on the Quote / Order. It would have a default message body that can be changed.
+
+'Hooks:
+'Quote Script 1 - 10960, Script 3 - 10980
+'Quote Populate - 10710 - New - Caller switch N
+'Quote Post Load Screen - 10721
+
+'Sales Order Script 1 - 11910, script 3 - 11930
+'Sales Order Populate - 11565 - Existing
+'Sales Order Populate - 11560 - New - caller switch N
+
+'Passed variables:
+'Contact Name - 000001
+'Contact Email - 000071
+'Customer PO - 000025
+'Customer ID - 000006
+'Order/Quote # - 000003
+'Script 3 name - 000203
+'Bill name - 0000007
+'Ship name - 0000008
+'Salesperson - 000030
+
+F.Intrinsic.Control.SelectCase(V.Caller.Hook)
+	F.Intrinsic.Control.Case(10980)
+		F.Intrinsic.Control.CallSub(QteEmail)
+	F.Intrinsic.Control.Case(10710)
+		F.Intrinsic.Control.If(V.Caller.Switches,<>,"N")
+			F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000203,"LOCK",1)
+			F.Intrinsic.Control.End
+		F.Intrinsic.Control.Else
+			F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000203,"LOCK",0)
+			V.Passed.000203.Set("Quick Email")
+		F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.Case(10721)
+		F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000203,"LOCK",0)
+		V.Passed.000203.Set("Quick Email")
+	F.Intrinsic.Control.Case(11930)
+		F.Intrinsic.Control.CallSub(SOEmail)		
+	F.Intrinsic.Control.Case(11565)
+		F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000203,"LOCK",0)
+		V.Passed.000203.Set("Quick Email")
+	F.Intrinsic.Control.Case(11560)
+		F.Intrinsic.Control.If(V.Caller.Switches,<>,"N")
+			F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000203,"LOCK",1)
+			F.Intrinsic.Control.End
+		F.Intrinsic.Control.Else
+			F.Intrinsic.UI.ChangeCallerProperty(V.Passed.000203,"LOCK",0)
+			V.Passed.000203.Set("Quick Email")
+		F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.CaseElse
+		F.Intrinsic.Control.If(V.Caller.Switches,=,"MX")
+			F.Intrinsic.Control.CallSub(EmailBodyMx)
+		F.Intrinsic.Control.Else
+			F.Intrinsic.Control.End
+		F.Intrinsic.Control.EndIf		
+F.Intrinsic.Control.EndSelect
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(Error,"SubRoutine",V.Ambient.CurrentSubroutine,"eNumber",V.Ambient.ErrorNumber,"eDescription",V.Ambient.ErrorDescription)
+F.Intrinsic.Control.EndTry
+Program.Sub.Main.End
+
+Program.Sub.EmailBodyMx.Start
+F.Intrinsic.Control.Try
+V.Local.sDir.Declare
+V.Local.bCheck.Declare
+
+F.Intrinsic.String.Build("{0}\6264\",V.Caller.GasDir,V.Global.sDir)
+
+F.Intrinsic.File.DirExists(V.Global.sDir,V.Local.bCheck)
+
+F.Intrinsic.Control.If(V.Local.bCheck,=,False)
+	F.Intrinsic.File.CreateDir(V.Global.sDir)
+F.Intrinsic.Control.Else
+	F.Intrinsic.String.Build("{0}\6264\GCG_6264_QteBody.txt",V.Caller.GasDir,V.Global.sQtePath)
+	F.Intrinsic.String.Build("{0}\6264\GCG_6264_SOBody.txt",V.Caller.GasDir,V.Global.sSOPath)
+	
+	F.Intrinsic.String.Build("{0}\6264\GCG_6264_QteSub.txt",V.Caller.GasDir,V.Global.sQteSubPath)
+	F.Intrinsic.String.Build("{0}\6264\GCG_6264_SOSub.txt",V.Caller.GasDir,V.Global.sSOSubPath)
+
+	F.Intrinsic.File.Exists(V.Global.sQtePath,V.Local.bCheck)
+	F.Intrinsic.Control.If(V.Local.bCheck)
+		F.Intrinsic.File.File2String(V.Global.sQtePath,V.Global.sQteBody)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.File.String2File(V.Global.sQtePath,"")
+	F.Intrinsic.Control.EndIf
+	
+	F.Intrinsic.File.Exists(V.Global.sSOPath,V.Local.bCheck)
+	F.Intrinsic.Control.If(V.Local.bCheck)
+		F.Intrinsic.File.File2String(V.Global.sSOPath,V.Global.sSOBody)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.File.String2File(V.Global.sSOPath,"")
+	F.Intrinsic.Control.EndIf
+	
+	F.Intrinsic.File.Exists(V.Global.sQteSubPath,V.Local.bCheck)
+	F.Intrinsic.Control.If(V.Local.bCheck)
+		F.Intrinsic.File.File2String(V.Global.sQteSubPath,V.Global.sQteSub)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.File.String2File(V.Global.sQteSubPath,"")
+	F.Intrinsic.Control.EndIf
+	
+	F.Intrinsic.File.Exists(V.Global.sSOSubPath,V.Local.bCheck)
+	F.Intrinsic.Control.If(V.Local.bCheck)
+		F.Intrinsic.File.File2String(V.Global.sSOSubPath,V.Global.sSOSub)
+	F.Intrinsic.Control.Else
+		F.Intrinsic.File.String2File(V.Global.sSOSubPath,"")
+	F.Intrinsic.Control.EndIf	
+F.Intrinsic.Control.EndIf
+
+Gui.fmQuickEmail.lstVar.AddItem("%BILLNAME%")
+Gui.fmQuickEmail.lstVar.AddItem("%SHIPNAME%")
+Gui.fmQuickEmail.lstVar.AddItem("%CONTACT%")
+Gui.fmQuickEmail.lstVar.AddItem("%CUSTOMERID%")
+Gui.fmQuickEmail.lstVar.AddItem("%PO%")
+Gui.fmQuickEmail.lstVar.AddItem("%SALESPERSON%")
+
+Gui.fmQuickEmail.ddlBodyType.AddItem("Quote",0)
+Gui.fmQuickEmail.ddlBodyType.AddItem("Sales Order",1)
+
+Gui.fmQuickEmail..Show
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(Error,"SubRoutine",V.Ambient.CurrentSubroutine,"eNumber",V.Ambient.ErrorNumber,"eDescription",V.Ambient.ErrorDescription)
+F.Intrinsic.Control.EndTry
+Program.Sub.EmailBodyMx.End
+
+Program.Sub.QteEmail.Start
+F.Intrinsic.Control.Try
+V.Local.sPartDesc.Declare
+V.Local.sQteBody.Declare
+V.Local.bCheck.Declare
+V.Local.sSQL.Declare
+V.Local.sOrderNum.Declare
+V.Local.sRecipient.Declare
+V.Local.sSubject.Declare
+
+V.Local.sRecipient.Set(V.Passed.000071)
+
+F.Intrinsic.String.Build("{0}\6264\GCG_6264_QteBody.txt",V.Caller.GasDir,V.Global.sQtePath)
+
+F.Intrinsic.File.Exists(V.Global.sQtePath,V.Local.bCheck)
+
+F.Intrinsic.Control.If(V.Local.bCheck)
+	F.Intrinsic.File.File2String(V.Global.sQtePath,V.Global.sQteBody)
+F.Intrinsic.Control.Else
+	F.Intrinsic.UI.Msgbox("Default email body not found","Error")
+	F.Intrinsic.Control.End
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Build("{0}\6264\GCG_6264_QteSub.txt",V.Caller.GasDir,V.Global.sQteSubPath)
+
+F.Intrinsic.File.Exists(V.Global.sQteSubPath,V.Local.bCheck)
+
+F.Intrinsic.Control.If(V.Local.bCheck)
+	F.Intrinsic.File.File2String(V.Global.sQteSubPath,V.Global.sQteSub)	
+F.Intrinsic.Control.EndIf
+	
+F.Intrinsic.String.Replace(V.Global.sQteBody,"%BILLNAME%",V.Passed.000007.Trim,V.local.sQteBody)
+F.Intrinsic.String.Replace(V.local.sQteBody,"%SHIPNAME%",V.Passed.000008.Trim,V.local.sQteBody)
+F.Intrinsic.String.Replace(V.local.sQteBody,"%CONTACT%",V.Passed.000001.Trim,V.local.sQteBody)
+F.Intrinsic.String.Replace(V.local.sQteBody,"%CUSTOMERID%",V.Passed.000006.Trim,V.local.sQteBody)
+F.Intrinsic.String.Replace(V.Local.sQteBody,"%PO%",V.Passed.000025.Trim,V.local.sQteBody)
+F.Intrinsic.String.Replace(V.Local.sQteBody,"%SALESPERSON%",V.Passed.000030.Trim,V.local.sQteBody)
+
+F.ODBC.Connection!conts.OpenCompanyConnection
+F.Intrinsic.String.LPad(V.Passed.000003,"0",7,V.Local.sOrderNum)
+F.Intrinsic.String.Build("Select PART,DESCRIPTION from V_QUOTE_LINES where QUOTE_NO = '{0}'",V.Local.sOrderNum,V.Local.sSQL)
+F.ODBC.Connection!conts.ExecuteAndReturn(V.Local.sSQL,V.Local.sSQL)
+F.ODBC.Connection!conts.Close
+
+F.Intrinsic.Control.If(V.Local.sSQL.Trim,<>,"")
+	F.Intrinsic.String.Build("PART:*!*                  DESCRIPTION:#$#{0}",V.Local.sSQL,V.Local.sSQL)
+
+	F.Intrinsic.String.Replace(V.Local.sSQL,"#$#",V.Ambient.NewLine,V.Local.sSQL)
+	F.Intrinsic.String.Replace(V.Local.sSQL,"!*",V.Ambient.Tab,V.Local.sSQL)
+	F.Intrinsic.String.Replace(V.Local.sSQL,"*",V.Ambient.Tab,V.Local.sSQL)
+	
+	F.Intrinsic.String.Replace(V.Local.sQteBody,"%PARTDATA%",V.Local.sSQL,V.local.sQteBody)
+F.Intrinsic.Control.Else
+	F.Intrinsic.String.Replace(V.Local.sQteBody,"%PARTDATA%","",V.local.sQteBody)
+F.Intrinsic.Control.EndIf
+
+Function.Automation.MSOutlook.ComposeEmail(V.Local.sRecipient,V.Global.sQteSub,V.Local.sQteBody)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(Error,"SubRoutine",V.Ambient.CurrentSubroutine,"eNumber",V.Ambient.ErrorNumber,"eDescription",V.Ambient.ErrorDescription)
+F.Intrinsic.Control.EndTry
+Program.Sub.QteEmail.End
+
+Program.Sub.SOEmail.Start
+F.Intrinsic.Control.Try
+V.Local.sPartDesc.Declare
+V.Local.sSOBody.Declare
+V.Local.bCheck.Declare
+V.Local.sSQL.Declare
+V.Local.sOrderNum.Declare
+V.Local.sRecipient.Declare
+
+V.Local.sRecipient.Set(V.Passed.000071)
+
+F.Intrinsic.String.Build("{0}\6264\GCG_6264_SOBody.txt",V.Caller.GasDir,V.Global.sSOPath)
+
+F.Intrinsic.File.Exists(V.Global.sSOPath,V.Local.bCheck)
+F.Intrinsic.Control.If(V.Local.bCheck)
+	F.Intrinsic.File.File2String(V.Global.sSOPath,V.Global.sSOBody)
+F.Intrinsic.Control.Else
+	F.Intrinsic.UI.Msgbox("Default email body not found","Error")
+	F.Intrinsic.Control.End
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.String.Build("{0}\6264\GCG_6264_SOSub.txt",V.Caller.GasDir,V.Global.sSOSubPath)
+
+F.Intrinsic.File.Exists(V.Global.sSOSubPath,V.Local.bCheck)
+
+F.Intrinsic.Control.If(V.Local.bCheck)
+	F.Intrinsic.File.File2String(V.Global.sSOSubPath,V.Global.sSOSub)
+F.Intrinsic.Control.EndIf
+	
+F.Intrinsic.String.Replace(V.Global.sSOBody,"%BILLNAME%",V.Passed.000007.Trim,V.local.sSOBody)
+F.Intrinsic.String.Replace(V.local.sSOBody,"%SHIPNAME%",V.Passed.000008.Trim,V.local.sSOBody)
+F.Intrinsic.String.Replace(V.local.sSOBody,"%CONTACT%",V.Passed.000001.Trim,V.local.sSOBody)
+F.Intrinsic.String.Replace(V.local.sSOBody,"%CUSTOMERID%",V.Passed.000006.Trim,V.local.sSOBody)
+F.Intrinsic.String.Replace(V.Local.sSOBody,"%PO%",V.Passed.000025.Trim,V.local.sSOBody)
+F.Intrinsic.String.Replace(V.Local.sSOBody,"%SALESPERSON%",V.Passed.000030.Trim,V.local.sSOBody)
+
+F.ODBC.Connection!conts.OpenCompanyConnection
+F.Intrinsic.String.LPad(V.Passed.000003,"0",7,V.Local.sOrderNum)
+F.Intrinsic.String.Build("Select PART,DESCRIPTION from V_ORDER_LINES where ORDER_NO = '{0}'",V.Local.sOrderNum,V.Local.sSQL)
+F.ODBC.Connection!conts.ExecuteAndReturn(V.Local.sSQL,V.Local.sSQL)
+F.ODBC.Connection!conts.Close
+
+F.Intrinsic.Control.If(V.Local.sSQL.Trim,<>,"")
+	F.Intrinsic.String.Build("PART:*!*                  DESCRIPTION:#$#{0}",V.Local.sSQL,V.Local.sSQL)
+
+	F.Intrinsic.String.Replace(V.Local.sSQL,"#$#",V.Ambient.NewLine,V.Local.sSQL)
+	F.Intrinsic.String.Replace(V.Local.sSQL,"!*",V.Ambient.Tab,V.Local.sSQL)
+	F.Intrinsic.String.Replace(V.Local.sSQL,"*",V.Ambient.Tab,V.Local.sSQL)
+	
+	F.Intrinsic.String.Replace(V.Local.sSOBody,"%PARTDATA%",V.Local.sSQL,V.local.sSOBody)
+F.Intrinsic.Control.Else
+	F.Intrinsic.String.Replace(V.Local.sSOBody,"%PARTDATA%","",V.local.sSOBody)
+F.Intrinsic.Control.EndIf
+
+Function.Automation.MSOutlook.ComposeEmail(V.Local.sRecipient,V.Global.sSOSub,V.Local.sSOBody)
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(Error,"SubRoutine",V.Ambient.CurrentSubroutine,"eNumber",V.Ambient.ErrorNumber,"eDescription",V.Ambient.ErrorDescription)
+F.Intrinsic.Control.EndTry
+Program.Sub.SOEmail.End
+
+Program.Sub.ddlBodyType_Change.Start
+F.Intrinsic.Control.Try
+
+F.Intrinsic.Control.If(V.Screen.fmQuickEmail!ddlBodyType.Value,=,"Quote")
+	Gui.fmQuickEmail.txtBody.Text(V.Global.sQteBody)
+	Gui.fmQuickEmail.txtSubject.Text(V.Global.sQteSub)
+F.Intrinsic.Control.ElseIf(V.Screen.fmQuickEmail!ddlBodyType.Value,=,"Sales Order")
+	Gui.fmQuickEmail.txtBody.Text(V.Global.sSOBody)
+	Gui.fmQuickEmail.txtSubject.Text(V.Global.sSOSub)
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(Error,"SubRoutine",V.Ambient.CurrentSubroutine,"eNumber",V.Ambient.ErrorNumber,"eDescription",V.Ambient.ErrorDescription)
+F.Intrinsic.Control.EndTry
+Program.Sub.ddlBodyType_Change.End
+
+Program.Sub.cmdSave_Click.Start
+F.Intrinsic.Control.Try
+
+F.Intrinsic.String.Build("{0}\6264\GCG_6264_QteBody.txt",V.Caller.GasDir,V.Global.sQtePath)
+F.Intrinsic.String.Build("{0}\6264\GCG_6264_SOBody.txt",V.Caller.GasDir,V.Global.sSOPath)
+
+F.Intrinsic.String.Build("{0}\6264\GCG_6264_QteSub.txt",V.Caller.GasDir,V.Global.sQteSubPath)
+F.Intrinsic.String.Build("{0}\6264\GCG_6264_SOSub.txt",V.Caller.GasDir,V.Global.sSOSubPath)
+
+F.Intrinsic.Control.If(V.Screen.fmQuickEmail!ddlBodyType.Value,=,"Quote")
+	V.Global.sQteBody.Set(V.Screen.fmQuickEmail!txtBody.Text)
+	V.Global.sQteSub.Set(V.Screen.fmQuickEmail!txtSubject.text)
+	F.Intrinsic.File.String2File(V.Global.sQtePath,V.Global.sQteBody)
+	F.Intrinsic.File.String2File(V.Global.sQteSubPath,V.Global.sQteSub)
+F.Intrinsic.Control.ElseIf(V.Screen.fmQuickEmail!ddlBodyType.Value,=,"Sales Order")
+	V.Global.sSOBody.Set(V.Screen.fmQuickEmail!txtBody.Text)
+	V.Global.sSOSub.Set(V.Screen.fmQuickEmail!txtSubject.Text)
+	F.Intrinsic.File.String2File(V.Global.sSOPath,V.Global.sSOBody)
+	F.Intrinsic.File.String2File(V.Global.sSOSubPath,V.Global.sSOSub)
+F.Intrinsic.Control.EndIf
+
+Gui.fmQuickEmail.ddlBodyType.ClearSelected
+Gui.fmQuickEmail.txtBody.Text("")
+Gui.fmQuickEmail.txtSubject.Text("")
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Catch
+	F.Intrinsic.Control.CallSub(Error,"SubRoutine",V.Ambient.CurrentSubroutine,"eNumber",V.Ambient.ErrorNumber,"eDescription",V.Ambient.ErrorDescription)
+F.Intrinsic.Control.EndTry
+Program.Sub.cmdSave_Click.End
+
+Program.Sub.fmQuickEmail_UnLoad.Start
+F.Intrinsic.Control.End
+Program.Sub.fmQuickEmail_UnLoad.End
+
+Program.Sub.Error.Start
+V.Local.sError.Declare
+V.Local.iRet.Declare
+V.Local.sSep.Declare
+
+F.Intrinsic.String.Build("-------------------------------------------------------------------------------------",,V.Local.sSep)
+F.Intrinsic.String.Build("({5}-{6}){0}{7}{0}Project: {4}{0}{7}{0}Sub: {1}{0}Error: {2}, {3}", V.Ambient.NewLine, V.Args.SubRoutine, V.Args.eNumber, V.Args.eDescription,V.Caller.ScriptFile,V.Ambient.Date, V.Ambient.Time,V.Local.sSep,V.Local.sError)
+F.Intrinsic.UI.Msgbox(V.Local.sError,"Error",V.Local.iRet)
+Program.Sub.Error.End
+
+Program.Sub.Comments.Start
+${$5$}$3.0.0.0$}$1
+${$6$}$tsmith$}$20210204140533015$}$xqPbj9atw05FglvzeFsZ9cqXP+qvG6tXf2VO1b4P/PBhSlLEqtCD6c3M7kyf1lHOdbfrPzz537Y=
+Program.Sub.Comments.End
